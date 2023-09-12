@@ -18,6 +18,6 @@ export const courseTypes = z.object({
   published: z.boolean(),
 });
 
-export const adminParams = z.infer<typeof adminTypes>;
-export const userParams = z.infer<typeof userTypes>;
-export const courseParams = z.infer<typeof courseTypes>;
+export type adminParams = z.infer<typeof adminTypes>;
+export type userParams = z.infer<typeof userTypes>;
+export type courseParams = z.infer<typeof courseTypes>;
