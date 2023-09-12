@@ -1,0 +1,2 @@
+-- AddForeignKey
+ALTER TABLE "Course" ADD CONSTRAINT "Course_id_fkey" FOREIGN KEY ("id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
