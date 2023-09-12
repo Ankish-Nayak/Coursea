@@ -8,7 +8,7 @@ export const authenticateJwt = (req: Request, res: Response, next: NextFunction)
   const secret = "SECr3t";
   console.log(secret);
   if (cookie.get("admin-token") || cookie.get("user-token")) {
-    if (typeof cookie.get("admin-token")) {
+    if (cookie.get("admin-token")) {
       const token: string = cookie.get("admin-token") || "";
       jwt.verify(token, secret, (err, user) => {
         if (err) {
