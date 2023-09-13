@@ -1,18 +1,18 @@
 import { z } from "zod";
 
 export const userTypes = z.object({
-  username: z.string(),
-  password: z.string(),
+  username: z.string().email(),
+  password: z.string().min(8),
 });
 
 export const adminTypes = z.object({
-  username: z.string(),
-  password: z.string(),
+  username: z.string().email(),
+  password: z.string().min(8),
 });
 
 export const courseTypes = z.object({
-  title: z.string(),
-  description: z.string(),
+  title: z.string().min(1),
+  description: z.string().max(100),
   imageLink: z.string(),
   price: z.number(),
   published: z.boolean(),
