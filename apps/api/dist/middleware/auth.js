@@ -13,6 +13,7 @@ const authenticateJwt = (req, res, next) => {
     const secret = "SECr3t";
     console.log(secret);
     if (cookie.get("admin-token") || cookie.get("user-token")) {
+        console.log("have cookie");
         if (cookie.get("admin-token")) {
             const token = cookie.get("admin-token") || "";
             jsonwebtoken_1.default.verify(token, secret, (err, user) => {

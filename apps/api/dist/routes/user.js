@@ -95,8 +95,9 @@ exports.router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, fu
             const token = jsonwebtoken_1.default.sign({ username, role: "user" }, secret, {
                 expiresIn: "1h",
             });
+            // res.setHeader('Set-Cookie',`user-token=helow`);
             const cookie = new cookies_1.default(req, res);
-            cookie.set("user-token", token);
+            cookie.set("user-token", token, { path: '/', httpOnly: false });
             res.json({ message: "User logged in", token });
         }
         else {
@@ -147,17 +148,6 @@ exports.router.post("/courses/:courseId", auth_1.authenticateJwt, (req, res) => 
             });
             if (updateUser) {
                 res.json({ message: "Course purchased successfully" });
-                // const order = await prisma.order.findUnique({
-                //   where: {
-                //     userId: updateUser.id,
-                //     courseId
-                //   },
-                // });
-                // if (order) {
-                //   res.json({ message: "Course purchased successfully" });
-                // } else {
-                //   res.status(403).json({ message: "purchase failed" });
-                // }
             }
             else {
                 res.status(403).json({ message: "User not found" });
@@ -190,27 +180,6 @@ exports.router.get("/purchasedCourses", auth_1.authenticateJwt, (req, res) => __
                 },
             });
             res.json({ purchasedCourses });
-            // const user = await prisma.user.findUnique({
-            //   where: { username },
-            //   include: {
-            //     purchasedCourses: true,
-            //   },
-            // });
-            // if (user) {
-            //   const purchasedCourses = [];
-            //   for (let i = 0; i < user.purchasedCourses.length; ++i) {
-            //     purchasedCourses.push(
-            //       await prisma.course.findUnique({
-            //         where: {
-            //           id: user.purchasedCourses[i].courseId,
-            //         },
-            //       })
-            //     );
-            //   }
-            //   res.status(200).json({ purchasedCourses: purchasedCourses });
-            // } else {
-            //   res.status(403).json({ message: "Course not found" });
-            // }
         }
         catch (e) {
             console.log(e);

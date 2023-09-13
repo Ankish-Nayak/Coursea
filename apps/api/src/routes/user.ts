@@ -77,7 +77,7 @@ router.post("/login", async (req: Request, res: Response) => {
         expiresIn: "1h",
       });
       const cookie = new Cookies(req, res);
-      cookie.set("user-token", token);
+      cookie.set("user-token", token,{path:'/',httpOnly: false});
       res.json({ message: "User logged in", token });
     } else {
       res.status(403).json({ message: "User not found" });
