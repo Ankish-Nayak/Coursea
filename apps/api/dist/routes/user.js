@@ -95,7 +95,6 @@ exports.router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, fu
             const token = jsonwebtoken_1.default.sign({ username, role: "user" }, secret, {
                 expiresIn: "1h",
             });
-            // res.setHeader('Set-Cookie',`user-token=helow`);
             const cookie = new cookies_1.default(req, res);
             cookie.set("user-token", token, { path: '/', httpOnly: false });
             res.json({ message: "User logged in", token });
