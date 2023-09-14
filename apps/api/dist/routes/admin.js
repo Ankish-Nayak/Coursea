@@ -199,6 +199,31 @@ exports.router.get("/courses", auth_1.authenticateJwt, (req, res) => __awaiter(v
         res.status(404).json({ message: "db error" });
     }
 }));
-// function parseInt(courseId: string) {
-//   throw new Error("Function not implemented.");
-// }
+exports.router.get("/courses/me", auth_1.authenticateJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (typeof req.headers["username"] === "string") {
+        const username = req.headers["username"];
+        const prisma = new client_1.PrismaClient();
+        try {
+            const courses = yield prisma.course.findMany({
+                where: {
+                    users: {
+                        some: {
+                            user: {
+                                username,
+                            },
+                        },
+                    },
+                },
+            });
+            res.json({ courses });
+        }
+        catch (e) {
+            console.log(e);
+            res.status(403).json({ message: "db error" });
+        }
+        yield prisma.$disconnect();
+    }
+    else {
+        res.status(403).json({ message: "Admin dose not exists" });
+    }
+}));

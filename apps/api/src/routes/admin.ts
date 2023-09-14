@@ -184,6 +184,34 @@ router.get("/courses", authenticateJwt, async (req: Request, res: Response) => {
     res.status(404).json({ message: "db error" });
   }
 });
-// function parseInt(courseId: string) {
-//   throw new Error("Function not implemented.");
-// }
+
+router.get(
+  "/courses/me",
+  authenticateJwt,
+  async (req: Request, res: Response) => {
+    if (typeof req.headers["username"] === "string") {
+      const username: string = req.headers["username"];
+      const prisma = new PrismaClient();
+      try {
+        const courses = await prisma.course.findMany({
+          where: {
+            users: {
+              some: {
+                user: {
+                  username,
+                },
+              },
+            },
+          },
+        });
+        res.json({ courses });
+      } catch (e) {
+        console.log(e);
+        res.status(403).json({ message: "db error" });
+      }
+      await prisma.$disconnect();
+    } else {
+      res.status(403).json({ message: "Admin dose not exists" });
+    }
+  }
+);
