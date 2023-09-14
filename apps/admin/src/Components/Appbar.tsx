@@ -46,7 +46,7 @@ export const Appbar = () => {
                 alignSelf: "flex-start",
               }}
             >
-              Coursea
+              Coursea | admin
             </Typography>
           </Link>
           <Button
@@ -62,10 +62,17 @@ export const Appbar = () => {
             variant="outlined"
             size="large"
             onClick={() => {
-              navigate("/purchasedCourses");
+              navigate("/addCourse");
             }}
           >
-            Purchased Courses
+            Add Course
+          </Button>
+          <Button variant="outlined"
+          size="large"
+          onClick={() => {
+            navigate('/courses/me')
+          }}>
+            Your Courses
           </Button>
         </div>
 
@@ -109,7 +116,7 @@ export const Appbar = () => {
               alignSelf: "flex-start",
             }}
           >
-            Coursea
+            Coursea | admin
           </Typography>
         </Link>
       </div>
