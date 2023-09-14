@@ -4,7 +4,7 @@
   "description": "backend for coursea",
   "main": "index.js",
   "scripts": {
-    "dev" : "tsc --b && node dist/index.js",
+    "dev": "tsc --b && node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ankish Nayak",
@@ -23,6 +23,7 @@
     "@types/express": "^4.17.17",
     "@types/jsonwebtoken": "^9.0.2",
     "prisma": "*",
-    "tsconfig" : "*"
+    "source-map-support": "^0.5.21",
+    "tsconfig": "*"
   }
 }

@@ -1,10 +1,11 @@
 import express, { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { authenticateJwt } from "../middleware/auth";
-import { PrismaClient } from "@prisma/client";
 import { adminTypes, courseTypes } from "types";
 import Cookies from "cookies";
+import { prisma } from "../index";
 export const router = express.Router();
+require('source-map-support').install();
 // @ts-ignore
 // const secret: string = process.env.SECRET;
 console.log(process.env.SECRET);
@@ -12,7 +13,6 @@ const secret = "SECr3t";
 router.get("/me", authenticateJwt, async (req: Request, res: Response) => {
   if (typeof req.headers["admin"] === "string") {
     const username: string = req.headers["admin"];
-    const prisma = new PrismaClient();
     try {
       const admin = await prisma.admin.findUnique({ where: { username } });
       if (admin) {
@@ -24,7 +24,6 @@ router.get("/me", authenticateJwt, async (req: Request, res: Response) => {
       console.log(e);
       res.status(404).json({ message: "db error" });
     }
-    await prisma.$disconnect();
   } else {
     res.status(404).json({ message: "Admin dose not exists" });
   }
@@ -36,7 +35,6 @@ router.post("/signup", async (req: Request, res: Response) => {
     return res.status(411).json({ error: parsedInput.error });
   }
   const { username, password } = parsedInput.data;
-  const prisma = new PrismaClient();
   try {
     const admin = await prisma.admin.findUnique({
       where: { username, password },
@@ -62,7 +60,6 @@ router.post("/signup", async (req: Request, res: Response) => {
     console.log(e);
     res.status(404).json({ message: "db error" });
   }
-  await prisma.$disconnect();
 });
 
 router.post("/login", async (req: Request, res: Response) => {
@@ -71,7 +68,6 @@ router.post("/login", async (req: Request, res: Response) => {
     return res.status(411).json({ error: parsedInput.error });
   }
   const { username, password } = parsedInput.data;
-  const prisma = new PrismaClient();
   try {
     const admin = await prisma.admin.findUnique({
       where: { username, password },
@@ -90,7 +86,6 @@ router.post("/login", async (req: Request, res: Response) => {
     console.log(e);
     res.status(404).json({ message: "db error" });
   }
-  await prisma.$disconnect();
 });
 
 router.post(
@@ -103,7 +98,6 @@ router.post(
       return res.status(411).json({ error: parsedInput.error });
     }
     const courseData = parsedInput.data;
-    const prisma = new PrismaClient();
     if (typeof req.headers["admin"] === "string") {
       const username: string = req.headers["admin"];
       try {
@@ -150,7 +144,6 @@ router.put(
     // const temp =
     const courseId = parseInt(req.params.courseId);
     const courseData = parsedInput.data;
-    const prisma = new PrismaClient();
     try {
       const course = await prisma.course.findUnique({
         where: { id: courseId },
@@ -176,7 +169,6 @@ router.put(
 );
 
 router.get("/courses", authenticateJwt, async (req: Request, res: Response) => {
-  const prisma = new PrismaClient();
   try {
     const courses = await prisma.course.findMany({});
     res.json({ courses });
@@ -192,7 +184,6 @@ router.get(
   async (req: Request, res: Response) => {
     if (typeof req.headers["admin"] === "string") {
       const username: string = req.headers["admin"];
-      const prisma = new PrismaClient();
       try {
         const admin = await prisma.admin.findUnique({ where: { username } });
         if (admin) {
@@ -209,7 +200,6 @@ router.get(
         console.log(e);
         res.status(403).json({ message: "db error" });
       }
-      await prisma.$disconnect();
     } else {
       res.status(403).json({ message: "Admin dose not exists" });
     }

@@ -1,6 +1,7 @@
 import Cookies from "cookies";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+require('source-map-support').install();
 export const authenticateJwt = (
   req: Request,
   res: Response,
@@ -17,10 +18,12 @@ export const authenticateJwt = (
       const token: string = cookie.get("admin-token") || "";
       jwt.verify(token, secret, (err, user) => {
         if (err) {
-          return res.sendStatus(403);
+          console.log(err);
+          return res.status(403).json({message: "jwt error"});
         }
         if (!user || typeof user === "string") {
-          return res.sendStatus(403);
+          console.log(err);
+          return res.status(403).json({message: "type error"});
         }
         req.headers["admin"] = user.username;
         req.headers["role"] = user.role;
@@ -30,10 +33,10 @@ export const authenticateJwt = (
       const token: string = cookie.get("user-token") || "";
       jwt.verify(token, secret, (err, user) => {
         if (err) {
-          return res.sendStatus(403);
+          return res.status(403).json({message: "jwt error"});
         }
         if (!user || typeof user === "string") {
-          return res.sendStatus(403);
+          return res.status(403).json({message: "type error"});
         }
         req.headers["user"] = user.username;
         req.headers["role"] = user.role;

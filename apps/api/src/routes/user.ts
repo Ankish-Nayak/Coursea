@@ -1,15 +1,15 @@
 import express, { Request, Response } from "express";
 import { authenticateJwt } from "../middleware/auth";
-import { PrismaClient } from "@prisma/client";
 import { userTypes } from "types";
 import jwt from "jsonwebtoken";
 import Cookies from "cookies";
 export const router = express.Router();
+import { prisma } from "../index";
+require('source-map-support').install();
 const secret = "SECr3t";
 router.get("/me", authenticateJwt, async (req: Request, res: Response) => {
   if (typeof req.headers["user"] === "string") {
     const username: string = req.headers["user"];
-    const prisma = new PrismaClient();
     try {
       const user = await prisma.user.findUnique({ where: { username } });
       if (user) {
@@ -20,7 +20,6 @@ router.get("/me", authenticateJwt, async (req: Request, res: Response) => {
     } catch (e) {
       console.log(e);
     }
-    await prisma.$disconnect();
   } else {
     res.status(403).json({ message: "User dose not exists" });
   }
@@ -32,7 +31,6 @@ router.post("/signup", async (req: Request, res: Response) => {
     return res.status(411).json({ error: parsedInput.error });
   }
   const { username, password } = parsedInput.data;
-  const prisma = new PrismaClient();
   try {
     const user = await prisma.user.findUnique({
       where: { username, password },
@@ -58,7 +56,6 @@ router.post("/signup", async (req: Request, res: Response) => {
     console.log(e);
     res.status(403).json({ message: "db error" });
   }
-  await prisma.$disconnect();
 });
 
 router.post("/login", async (req: Request, res: Response) => {
@@ -67,7 +64,6 @@ router.post("/login", async (req: Request, res: Response) => {
     return res.status(411).json({ error: parsedInput.error });
   }
   const { username, password } = parsedInput.data;
-  const prisma = new PrismaClient();
   try {
     const user = await prisma.user.findUnique({
       where: { username, password },
@@ -77,7 +73,7 @@ router.post("/login", async (req: Request, res: Response) => {
         expiresIn: "1h",
       });
       const cookie = new Cookies(req, res);
-      cookie.set("user-token", token,{path:'/',httpOnly: false});
+      cookie.set("user-token", token, { path: "/", httpOnly: false });
       res.json({ message: "User logged in", token });
     } else {
       res.status(403).json({ message: "User not found" });
@@ -86,11 +82,9 @@ router.post("/login", async (req: Request, res: Response) => {
     console.log(e);
     res.status(403).json({ message: "db error" });
   }
-  await prisma.$disconnect();
 });
 
 router.get("/courses", authenticateJwt, async (req: Request, res: Response) => {
-  const prisma = new PrismaClient();
   try {
     const courses = await prisma.course.findMany({
       where: { published: true },
@@ -100,7 +94,6 @@ router.get("/courses", authenticateJwt, async (req: Request, res: Response) => {
     console.log(e);
     res.status(403).json({ message: "db error" });
   }
-  await prisma.$disconnect();
 });
 
 router.post(
@@ -109,7 +102,6 @@ router.post(
   async (req: Request, res: Response) => {
     if (typeof req.headers["user"] === "string") {
       const username: string = req.headers["user"];
-      const prisma = new PrismaClient();
       try {
         const courseId: number = parseInt(req.params.courseId);
         const updateUser = await prisma.user.update({
@@ -137,7 +129,6 @@ router.post(
         console.log(e);
         res.status(404).json({ message: "db error" });
       }
-      await prisma.$disconnect();
     } else {
       res.status(404).json({ message: "user not found" });
     }
@@ -150,7 +141,6 @@ router.get(
   async (req: Request, res: Response) => {
     if (typeof req.headers["user"] === "string") {
       const username: string = req.headers["user"];
-      const prisma = new PrismaClient();
       try {
         const purchasedCourses = await prisma.course.findMany({
           where: {
@@ -168,7 +158,6 @@ router.get(
         console.log(e);
         res.status(403).json({ message: "db error" });
       }
-      await prisma.$disconnect();
     } else {
       res.status(403).json({ message: "db error" });
     }
