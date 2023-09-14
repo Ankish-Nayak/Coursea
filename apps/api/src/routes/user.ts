@@ -7,8 +7,8 @@ import Cookies from "cookies";
 export const router = express.Router();
 const secret = "SECr3t";
 router.get("/me", authenticateJwt, async (req: Request, res: Response) => {
-  if (typeof req.headers["username"] === "string") {
-    const username: string = req.headers["username"];
+  if (typeof req.headers["user"] === "string") {
+    const username: string = req.headers["user"];
     const prisma = new PrismaClient();
     try {
       const user = await prisma.user.findUnique({ where: { username } });
@@ -107,8 +107,8 @@ router.post(
   "/courses/:courseId",
   authenticateJwt,
   async (req: Request, res: Response) => {
-    if (typeof req.headers["username"] === "string") {
-      const username: string = req.headers["username"];
+    if (typeof req.headers["user"] === "string") {
+      const username: string = req.headers["user"];
       const prisma = new PrismaClient();
       try {
         const courseId: number = parseInt(req.params.courseId);
@@ -148,8 +148,8 @@ router.get(
   "/purchasedCourses",
   authenticateJwt,
   async (req: Request, res: Response) => {
-    if (typeof req.headers["username"] === "string") {
-      const username: string = req.headers["username"];
+    if (typeof req.headers["user"] === "string") {
+      const username: string = req.headers["user"];
       const prisma = new PrismaClient();
       try {
         const purchasedCourses = await prisma.course.findMany({

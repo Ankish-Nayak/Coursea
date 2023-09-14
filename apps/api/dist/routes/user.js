@@ -22,8 +22,8 @@ const cookies_1 = __importDefault(require("cookies"));
 exports.router = express_1.default.Router();
 const secret = "SECr3t";
 exports.router.get("/me", auth_1.authenticateJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (typeof req.headers["username"] === "string") {
-        const username = req.headers["username"];
+    if (typeof req.headers["user"] === "string") {
+        const username = req.headers["user"];
         const prisma = new client_1.PrismaClient();
         try {
             const user = yield prisma.user.findUnique({ where: { username } });
@@ -124,8 +124,8 @@ exports.router.get("/courses", auth_1.authenticateJwt, (req, res) => __awaiter(v
     yield prisma.$disconnect();
 }));
 exports.router.post("/courses/:courseId", auth_1.authenticateJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (typeof req.headers["username"] === "string") {
-        const username = req.headers["username"];
+    if (typeof req.headers["user"] === "string") {
+        const username = req.headers["user"];
         const prisma = new client_1.PrismaClient();
         try {
             const courseId = parseInt(req.params.courseId);
@@ -163,8 +163,8 @@ exports.router.post("/courses/:courseId", auth_1.authenticateJwt, (req, res) => 
     }
 }));
 exports.router.get("/purchasedCourses", auth_1.authenticateJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (typeof req.headers["username"] === "string") {
-        const username = req.headers["username"];
+    if (typeof req.headers["user"] === "string") {
+        const username = req.headers["user"];
         const prisma = new client_1.PrismaClient();
         try {
             const purchasedCourses = yield prisma.course.findMany({

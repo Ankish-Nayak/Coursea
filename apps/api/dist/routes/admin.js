@@ -25,11 +25,11 @@ exports.router = express_1.default.Router();
 console.log(process.env.SECRET);
 const secret = "SECr3t";
 exports.router.get("/me", auth_1.authenticateJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (typeof req.headers["username"] === "string") {
-        const username = req.headers["username"];
+    if (typeof req.headers["admin"] === "string") {
+        const username = req.headers["admin"];
         const prisma = new client_1.PrismaClient();
         try {
-            const admin = yield prisma.user.findUnique({ where: { username } });
+            const admin = yield prisma.admin.findUnique({ where: { username } });
             if (admin) {
                 res.json({ username: admin.username });
             }
@@ -114,14 +114,15 @@ exports.router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, fu
     yield prisma.$disconnect();
 }));
 exports.router.post("/courses", auth_1.authenticateJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("hit");
     const parsedInput = types_1.courseTypes.safeParse(req.body);
     if (!parsedInput.success) {
         return res.status(411).json({ error: parsedInput.error });
     }
     const courseData = parsedInput.data;
     const prisma = new client_1.PrismaClient();
-    if (typeof req.headers["username"] === "string") {
-        const username = req.headers["username"];
+    if (typeof req.headers["admin"] === "string") {
+        const username = req.headers["admin"];
         try {
             const admin = yield prisma.admin.findUnique({ where: { username } });
             if (admin) {
@@ -200,22 +201,22 @@ exports.router.get("/courses", auth_1.authenticateJwt, (req, res) => __awaiter(v
     }
 }));
 exports.router.get("/courses/me", auth_1.authenticateJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (typeof req.headers["username"] === "string") {
-        const username = req.headers["username"];
+    if (typeof req.headers["admin"] === "string") {
+        const username = req.headers["admin"];
         const prisma = new client_1.PrismaClient();
         try {
-            const courses = yield prisma.course.findMany({
-                where: {
-                    users: {
-                        some: {
-                            user: {
-                                username,
-                            },
-                        },
+            const admin = yield prisma.admin.findUnique({ where: { username } });
+            if (admin) {
+                const courses = yield prisma.course.findMany({
+                    where: {
+                        creatorId: admin.id,
                     },
-                },
-            });
-            res.json({ courses });
+                });
+                res.json({ courses });
+            }
+            else {
+                res.status(403).json({ message: "Admin dose not exists" });
+            }
         }
         catch (e) {
             console.log(e);

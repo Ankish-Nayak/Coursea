@@ -23,7 +23,7 @@ const authenticateJwt = (req, res, next) => {
                 if (!user || typeof user === "string") {
                     return res.sendStatus(403);
                 }
-                req.headers["username"] = user.username;
+                req.headers["admin"] = user.username;
                 req.headers["role"] = user.role;
             });
         }
@@ -36,13 +36,14 @@ const authenticateJwt = (req, res, next) => {
                 if (!user || typeof user === "string") {
                     return res.sendStatus(403);
                 }
-                req.headers["username"] = user.username;
+                req.headers["user"] = user.username;
                 req.headers["role"] = user.role;
             });
         }
         next();
     }
     else {
+        console.log("not have cookie");
         res.sendStatus(401);
     }
 };

@@ -10,11 +10,11 @@ export const router = express.Router();
 console.log(process.env.SECRET);
 const secret = "SECr3t";
 router.get("/me", authenticateJwt, async (req: Request, res: Response) => {
-  if (typeof req.headers["username"] === "string") {
-    const username: string = req.headers["username"];
+  if (typeof req.headers["admin"] === "string") {
+    const username: string = req.headers["admin"];
     const prisma = new PrismaClient();
     try {
-      const admin = await prisma.user.findUnique({ where: { username } });
+      const admin = await prisma.admin.findUnique({ where: { username } });
       if (admin) {
         res.json({ username: admin.username });
       } else {
@@ -97,14 +97,15 @@ router.post(
   "/courses",
   authenticateJwt,
   async (req: Request, res: Response) => {
+    console.log("hit");
     const parsedInput = courseTypes.safeParse(req.body);
     if (!parsedInput.success) {
       return res.status(411).json({ error: parsedInput.error });
     }
     const courseData = parsedInput.data;
     const prisma = new PrismaClient();
-    if (typeof req.headers["username"] === "string") {
-      const username: string = req.headers["username"];
+    if (typeof req.headers["admin"] === "string") {
+      const username: string = req.headers["admin"];
       try {
         const admin = await prisma.admin.findUnique({ where: { username } });
         if (admin) {
@@ -189,22 +190,21 @@ router.get(
   "/courses/me",
   authenticateJwt,
   async (req: Request, res: Response) => {
-    if (typeof req.headers["username"] === "string") {
-      const username: string = req.headers["username"];
+    if (typeof req.headers["admin"] === "string") {
+      const username: string = req.headers["admin"];
       const prisma = new PrismaClient();
       try {
-        const courses = await prisma.course.findMany({
-          where: {
-            users: {
-              some: {
-                user: {
-                  username,
-                },
-              },
+        const admin = await prisma.admin.findUnique({ where: { username } });
+        if (admin) {
+          const courses = await prisma.course.findMany({
+            where: {
+              creatorId: admin.id,
             },
-          },
-        });
-        res.json({ courses });
+          });
+          res.json({ courses });
+        } else {
+          res.status(403).json({ message: "Admin dose not exists" });
+        }
       } catch (e) {
         console.log(e);
         res.status(403).json({ message: "db error" });
