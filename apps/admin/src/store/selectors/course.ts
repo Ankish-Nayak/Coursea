@@ -33,3 +33,11 @@ export const coursePrice = selector({
     return "";
   },
 });
+
+export const courseData = selector({
+  key: "courseData",
+  get: ({get}) => {
+    const state = get(courseState);
+    return state.course;
+  }
+})

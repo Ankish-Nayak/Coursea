@@ -1,15 +1,23 @@
 import { atom } from "recoil";
 type course = {
+  id: number,
   title: string;
   description: string;
   price: number;
   imageLink: string;
-  published: Boolean;
+  published: boolean;
 };
-export const courseState = atom<{ isLoading: Boolean; course: course | null }>({
+export const courseState = atom<{ isLoading: Boolean; course: course  }>({
   key: "courseState",
   default: {
     isLoading: true,
-    course: null,
+    course: {
+      id: 0,
+      title: "",
+      description: "",
+      price: 0,
+      imageLink: "",
+      published: false,
+    },
   },
 });
