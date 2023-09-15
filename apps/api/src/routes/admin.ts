@@ -5,7 +5,7 @@ import { adminTypes, courseTypes } from "types";
 import Cookies from "cookies";
 import { prisma } from "../index";
 export const router = express.Router();
-require('source-map-support').install();
+require("source-map-support").install();
 // @ts-ignore
 // const secret: string = process.env.SECRET;
 console.log(process.env.SECRET);
@@ -132,7 +132,7 @@ router.post(
     }
   }
 );
-
+// update course
 router.put(
   "/courses/:courseId",
   authenticateJwt,
@@ -167,7 +167,7 @@ router.put(
     }
   }
 );
-
+// all the courses
 router.get("/courses", authenticateJwt, async (req: Request, res: Response) => {
   try {
     const courses = await prisma.course.findMany({});
@@ -178,6 +178,7 @@ router.get("/courses", authenticateJwt, async (req: Request, res: Response) => {
   }
 });
 
+// courses from logged in admin
 router.get(
   "/courses/me",
   authenticateJwt,
@@ -205,3 +206,26 @@ router.get(
     }
   }
 );
+
+// route for getting particular course
+router.get(
+  "/courses/:courseId",
+  authenticateJwt,
+  async (req: Request, res: Response) => {
+    const courseId: number = parseInt(req.params.courseId);
+    try {
+      const course = await prisma.course.findUnique({
+        where: { id: courseId },
+      });
+      if (course) {
+        res.status(200).json({ course });
+      } else {
+        res.status(403).json({ message: "Course not found" });
+      }
+    } catch (e) {
+      res.status(404).json({ message: "db error" });
+    }
+  }
+);
+
+
